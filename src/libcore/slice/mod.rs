@@ -487,6 +487,76 @@ impl<T> [T] {
         start..end
     }
 
+    /// Returns the index of the element that a reference refers to.
+    ///
+    /// If the given reference points inside the slice, returns the index of
+    /// the element it refers to. If the reference does not refer to within the
+    /// slice, `None` is returned instead.
+    ///
+    /// If an index is returned, it is less than `self.len()`.
+    ///
+    /// Note that this does not look at the value, but only at the reference.
+    /// If you want to find the index of an element equal to a given value, use
+    /// [`iter().position()`][position] instead.
+    ///
+    /// ```
+    /// #![feature(subslice_offset)]
+    ///
+    /// let a = [0; 5];
+    ///
+    /// assert_eq!(a.index_of(&a[2]), Some(2));
+    /// assert_eq!(a.index_of(&3), None);
+    /// ```
+    ///
+    /// [position]: iter/trait.Iterator.html#method.position
+    #[unstable(feature = "subslice_offset", issue = "0")]
+    #[inline]
+    pub fn index_of(&self, element: &T) -> Option<usize> {
+        let element = element as *const _;
+        let range = self.as_ptr_range();
+        if range.contains(&element) {
+            unsafe { Some(element.offset_from(range.start) as usize) }
+        } else {
+            None
+        }
+    }
+
+    /// Returns the range referred to by a subslice.
+    ///
+    /// If the given slice falls entirely within this slice, returns the range
+    /// of indexes the subslice refers to. If the given slice is not a subslice
+    /// of this slice, `None` is returned.
+    ///
+    /// If a range is returned, both ends are less than or equal to `self.len()`.
+    ///
+    /// Note that this does not look at the contents of the slice, but only at
+    /// the memory addresses.
+    ///
+    /// ```
+    /// #![feature(subslice_offset)]
+    ///
+    /// let a = [0; 5];
+    ///
+    /// assert_eq!(a.range_of(&a[2..5]), Some(2..5));
+    /// assert_eq!(a.range_of(&[7, 8, 9]), None);
+    /// ```
+    #[unstable(feature = "subslice_offset", issue = "0")]
+    #[inline]
+    pub fn range_of(&self, subslice: &[T]) -> Option<Range<usize>> {
+        let range = self.as_ptr_range();
+        let subrange = subslice.as_ptr_range();
+        if subrange.start >= range.start && subrange.end <= range.end {
+            unsafe {
+                Some(Range {
+                    start: subrange.start.offset_from(range.start) as usize,
+                    end: subrange.end.offset_from(range.start) as usize,
+                })
+            }
+        } else {
+            None
+        }
+    }
+
     /// Swaps two elements in the slice.
     ///
     /// # Arguments
