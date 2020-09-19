@@ -1095,4 +1095,15 @@ compat_fn! {
     pub fn TryAcquireSRWLockShared(SRWLock: PSRWLOCK) -> BOOLEAN {
         panic!("rwlocks not available")
     }
+    pub fn WaitOnAddress(
+        Address: LPVOID,
+        CompareAddress: LPVOID,
+        AddressSize: SIZE_T,
+        dwMilliseconds: DWORD
+    ) -> BOOL {
+        panic!("WaitOnAddress not available")
+    }
+    pub fn WakeByAddressSingle(Address: LPVOID) -> () {
+        panic!("WakeByAddressSingle not available")
+    }
 }

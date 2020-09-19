@@ -21,6 +21,7 @@ pub mod condvar;
 pub mod env;
 pub mod ext;
 pub mod fs;
+pub mod futex;
 pub mod handle;
 pub mod io;
 pub mod memchr;
