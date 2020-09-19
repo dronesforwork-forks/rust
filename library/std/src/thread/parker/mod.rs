@@ -1,5 +1,5 @@
 cfg_if::cfg_if! {
-    if #[cfg(any(target_os = "linux", target_os = "android"))] {
+    if #[cfg(any(target_os = "linux", target_os = "android", windows))] {
         mod futex;
         pub use futex::Parker;
     } else {
