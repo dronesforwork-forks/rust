@@ -1,7 +1,7 @@
 #![feature(decl_macro)]
 
 mod foo {
-    pub macro m() { Vec::new(); ().clone() }
+    pub macro m() { Vec::<i32>::new(); ().clone() }
     fn f() { ::bar::m!(); }
 }
 
