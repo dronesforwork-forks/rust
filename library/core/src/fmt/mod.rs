@@ -36,6 +36,7 @@ pub use self::builders::{DebugList, DebugMap, DebugSet, DebugStruct, DebugTuple}
 #[doc(hidden)]
 pub mod rt {
     pub mod v1;
+    pub mod v2;
 }
 
 /// The type returned by formatter methods.
@@ -310,7 +311,7 @@ impl<'a> Arguments<'a> {
     #[doc(hidden)]
     #[inline]
     #[unstable(feature = "fmt_internals", reason = "internal to format_args!", issue = "none")]
-    pub fn new_v1(pieces: &'a [&'static str], args: &'a [ArgumentV1<'a>]) -> Arguments<'a> {
+    pub fn new_v1(pieces: &'static [&'static str], args: &'a [ArgumentV1<'a>]) -> Arguments<'a> {
         Arguments { pieces, fmt: None, args }
     }
 
@@ -324,9 +325,9 @@ impl<'a> Arguments<'a> {
     #[inline]
     #[unstable(feature = "fmt_internals", reason = "internal to format_args!", issue = "none")]
     pub fn new_v1_formatted(
-        pieces: &'a [&'static str],
+        pieces: &'static [&'static str],
         args: &'a [ArgumentV1<'a>],
-        fmt: &'a [rt::v1::Argument],
+        fmt: &'static [rt::v1::Argument],
     ) -> Arguments<'a> {
         Arguments { pieces, fmt: Some(fmt), args }
     }
@@ -383,15 +384,39 @@ impl<'a> Arguments<'a> {
 #[derive(Copy, Clone)]
 pub struct Arguments<'a> {
     // Format string pieces to print.
-    pieces: &'a [&'static str],
+    pieces: &'static [&'static str],
 
     // Placeholder specs, or `None` if all specs are default (as in "{}{}").
-    fmt: Option<&'a [rt::v1::Argument]>,
+    fmt: Option<&'static [rt::v1::Argument]>,
 
     // Dynamic arguments for interpolation, to be interleaved with string
     // pieces. (Every argument is preceded by a string piece.)
     args: &'a [ArgumentV1<'a>],
 }
+
+//impl Arguments<'static> {
+//    /// Make a `fmt::Arguments` that will format the given string literally.
+//    ///
+//    /// The resulting `fmt::Arguments` does not contain any references to
+//    /// `Display` or other formatting implementations, to reduce the potential
+//    /// binary size overhead.
+//    ///
+//    /// [`Self::as_str()`] on the resulting object will return this string.
+//    ///
+//    /// ```rust
+//    /// #![feature(fmt_from_str)]
+//    ///
+//    /// let fmt = std::fmt::Arguments::from_literal_str("hello");
+//    ///
+//    /// assert_eq!(&fmt.to_string(), "hello");
+//    /// assert_eq!(fmt.as_str(), Some("hello"));
+//    /// ```
+//    #[unstable(feature = "fmt_from_str", issue = "none")]
+//    #[inline]
+//    pub fn from_literal_str(msg: &'static str) -> Self {
+//        Self::new_v1(&[msg], &[])
+//    }
+//}
 
 impl<'a> Arguments<'a> {
     /// Get the formatted string, if it has no arguments to be formatted.

@@ -21,7 +21,7 @@ pub struct FormatSpec {
 }
 
 /// Possible alignments that can be requested as part of a formatting directive.
-#[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Alignment {
     /// Indication that contents should be left-aligned.
     Left,

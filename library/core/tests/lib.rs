@@ -4,6 +4,7 @@
 #![feature(array_methods)]
 #![feature(array_map)]
 #![feature(array_windows)]
+#![feature(assoc_char_consts)]
 #![feature(bool_to_option)]
 #![feature(bound_cloned)]
 #![feature(box_syntax)]
